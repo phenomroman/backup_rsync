@@ -3,20 +3,23 @@
 import sys
 import os
 import subprocess
-# from multiprocessing import Pool
+from multiprocessing import Pool
 
+#define source and destination directories
 src = sys.argv[1]
 dest = sys.argv[2]
 
-def rsync(src_file):
-  subprocess.run(['rsync', '-arq', src_file, dest])
+#define function to use rsync through subprocess module
+def rsync(src):
+  subprocess.run(['rsync', '-arq', src, dest])
 
-files_to_sync = []
+#decide the directories to sync for backup
+dir_to_sync = []
+for (root, dirnames, filenames) in os.walk(src):
+  for dirname in dirnames:
+    dir_to_sync.append(os.path.join(root, dirname))
 
-for (dir, dirnames, filenames) in os.walk(src):
-  for filename in filenames:
-    src_file = os.path.join(dir, filename)
-    files_to_sync.append(src_file)
-    break
-
-print(files_to_sync)
+if __name__ == "__main__":
+  #sync files using multiprocessors
+  pool = Pool(processes=os.cpu_count())
+  pool.map(rsync, dir_to_sync)
