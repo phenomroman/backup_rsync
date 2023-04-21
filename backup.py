@@ -1,12 +1,12 @@
 #! /usr/bin/env python3
 
-#import sys
+import sys
 import os
 import subprocess
 # from multiprocessing import Pool
 
-src = "change_domain"
-dest = "backup_change_domain"
+src = sys.argv[1]
+dest = sys.argv[2]
 
 def rsync(src_file):
   subprocess.run(['rsync', '-arq', src_file, dest])
@@ -19,3 +19,4 @@ for (dir, dirnames, filenames) in os.walk(src):
     files_to_sync.append(src_file)
     break
 
+print(files_to_sync)
