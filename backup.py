@@ -13,13 +13,15 @@ dest = sys.argv[2]
 def rsync(src):
   subprocess.run(['rsync', '-arq', src, dest])
 
-#decide the directories to sync for backup
-dir_to_sync = []
-for (root, dirnames, filenames) in os.walk(src):
-  for dirname in dirnames:
-    dir_to_sync.append(os.path.join(root, dirname))
-
 if __name__ == "__main__":
-  #sync files using multiprocessors
+  #get the number of processors to use
   pool = Pool(processes=os.cpu_count())
+  #decide the directories to sync for backup
+  dir_to_sync = []
+  for (root, dirnames, filenames) in os.walk(src):
+    for dirname in dirnames:
+      dir = os.path.join(root, dirname)
+      dir_to_sync.append(dir)
+    break
+  #sync files using multiprocessors
   pool.map(rsync, dir_to_sync)
